@@ -1,0 +1,16 @@
+import { Request, Response } from "express";
+import logger from "../utils/logger";
+import { createUser } from "../service/user.service";
+
+export async function createUserHandler(req: Request, res: Response) {
+    try {
+        const user = await createUser(req.body)
+        return user
+    } catch (error) {
+        logger.error(error)
+        if (error instanceof Error) {
+            return res.status(409).send(error.message)
+        }
+        return res.status(500).send("Internal server error")
+    }
+}
