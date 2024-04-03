@@ -9,7 +9,7 @@ function routes(app: Express) {
         res.sendStatus(200)
     })
 
-    app.use("/api", userRouter)
+    app.use(userRouter)
 
 }
 

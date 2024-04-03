@@ -5,7 +5,7 @@ import validate from "../middleware/validateResource"
 
 const router = Router()
 
-router.post("/users", validate(createUserSchema), createUserHandler)
+router.post("/api/users", validate(createUserSchema), createUserHandler)
 
 
 export default router
