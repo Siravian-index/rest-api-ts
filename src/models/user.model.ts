@@ -2,7 +2,16 @@ import mongoose from "mongoose"
 import bcrypt from "bcrypt"
 import config from "config"
 
-const schema = new mongoose.Schema({
+export interface UserDocument {
+    email: string
+    name: string
+    password: string
+    createdAt: Date
+    updatedAt: Date
+    comparePasswords: (password: string) => boolean
+}
+
+const schema = new mongoose.Schema<UserDocument>({
     email: {
         type: String,
         require: true,
@@ -22,5 +31,26 @@ const schema = new mongoose.Schema({
     }
 )
 
+schema.pre("save", async function (next) {
+    if (!this.isModified("password")) {
+        return next()
+    }
+
+    const salt = await bcrypt.genSalt(config.get<number>("saltWorkFactor"))
+    const hash = await bcrypt.hash(this.password, salt)
+    this.password = hash
+    return next()
+})
+
+schema.methods.comparePasswords = async function (password: string) {
+    try {
+        await bcrypt.compare(password, this.password)
+        return true
+    } catch (error) {
+        return false
+    }
+}
 
 const User = mongoose.model("User", schema)
+
+export default User
