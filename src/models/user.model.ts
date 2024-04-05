@@ -7,7 +7,7 @@ export interface UserInput {
     name: string
     password: string
 }
-export interface UserDocument extends UserInput {
+export interface UserDocument extends UserInput, mongoose.Document {
     createdAt: Date
     updatedAt: Date
     comparePasswords: (password: string) => boolean
