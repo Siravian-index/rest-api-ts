@@ -2,6 +2,8 @@ export default {
     port: 1337,
     dbUri: "mongodb+srv://davidAdmin:Hq5Cd2Vxh1pwscRN@nodejs.iymwdi4.mongodb.net/?retryWrites=true&w=majority",
     saltWorkFactor: 10,
+    accessTokenTtl: "15m",
+    refreshTokenTtl: "1y",
     publicKey: `-----BEGIN PUBLIC KEY-----
     MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgGoSD65LUdBdIZgAs5Aj310PVBIM
     zIOQmQvcvtVYnepradi/36Mn8HCYMXQBWI5OsDwcXvc/NDiUIxYo0C/e5R0duBqq
