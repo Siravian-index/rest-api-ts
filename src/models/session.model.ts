@@ -26,6 +26,14 @@ const schema = new mongoose.Schema<SessionInput>({
     }
 )
 
+schema.set('toJSON', {
+    virtuals: true,
+    versionKey: false,
+    transform: function (doc, ret) {
+        delete ret._id
+    }
+});
+
 const Session = mongoose.model("Session", schema)
 
 export default Session

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { validatePassword } from "../service/user.service";
 import { createSession } from "../service/session.service";
+import { signJwt } from "../utils/jwt";
 
 
 export async function createUserSessionHandler(req: Request, res: Response) {
@@ -14,6 +15,9 @@ export async function createUserSessionHandler(req: Request, res: Response) {
         const userAgent = req.get("user-agent") ?? ""
         const session = createSession(user.id, userAgent)
         // create access token
+        const accessToken = signJwt(user, {
+            // expiresIn: 
+        })
 
         // create refresh token
 
