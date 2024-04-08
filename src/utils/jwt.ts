@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken"
 const publicKey = config.get<string>("publicKey")
 const privateKey = config.get<string>("privateKey")
 
-export async function signJwt<T extends Object>(payload: T, options: jwt.SignOptions = {} ) {
+export function signJwt<T extends Object>(payload: T, options: jwt.SignOptions = {}) {
     const token = jwt.sign(payload, privateKey, {
         ...options,
         algorithm: "RS256",
@@ -21,7 +21,7 @@ export async function verifyJwt(token: string) {
             valid: true,
             expired: false,
         }
-    } catch(e: any) {
+    } catch (e: any) {
         return {
             decoded: null,
             valid: false,
