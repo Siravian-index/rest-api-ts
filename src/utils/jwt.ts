@@ -13,7 +13,7 @@ export function signJwt<T extends Object>(payload: T, options: jwt.SignOptions =
 }
 
 
-export async function verifyJwt(token: string) {
+export function verifyJwt(token: string) {
     try {
         const decoded = jwt.verify(token, publicKey)
         return {
