@@ -39,8 +39,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
         )
         // send access & refresh token
         const data = { accessToken, refreshToken }
-        return res.send(data)
-
+        return res.send({ data })
     } catch (error) {
         logger.error(error)
         return res.status(500).send("Something went wrong")

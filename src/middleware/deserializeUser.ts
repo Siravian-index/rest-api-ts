@@ -11,11 +11,11 @@ export default function deserializeUser(req: Request, res: Response, next: NextF
     }
 
     const { decoded, expired, valid } = verifyJwt(jwtToken)
-    if (valid && decoded && !expired) {
+    if (decoded) {
         res.locals.user = decoded
         return next()
     }
 
-
     return next()
-} 
+}
+
