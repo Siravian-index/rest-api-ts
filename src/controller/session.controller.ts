@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 import config from "config"
 import { validatePassword } from "../service/user.service";
-import { createSession, findSessions } from "../service/session.service";
+import { createSession, findSessions, updateSession } from "../service/session.service";
 import { signJwt } from "../utils/jwt";
 import logger from "../utils/logger";
 
@@ -57,4 +57,19 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
         return res.status(500).send("Something went wrong")
     }
 
+}
+
+
+export async function deleteUserSessionHandler(req: Request, res: Response) {
+    const sessionId = res.locals.user.session
+    try {
+        await updateSession({ id: sessionId }, { valid: false })
+        return res.send({
+            accessToken: null,
+            refreshToken: null,
+        })
+    } catch (error) {
+        logger.error(error)
+        return res.status(500).send("Something went wrong")
+    }
 }

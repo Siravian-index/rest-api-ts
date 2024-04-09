@@ -1,13 +1,13 @@
 import mongoose from "mongoose"
 import { UserDocument } from "./user.model"
 
-export interface SessionInput extends mongoose.Document {
+export interface SessionDocument extends mongoose.Document {
     user: UserDocument["_id"]
     valid: boolean
     userAgent: string
 }
 
-const schema = new mongoose.Schema<SessionInput>({
+const schema = new mongoose.Schema<SessionDocument>({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
