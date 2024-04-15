@@ -4,8 +4,9 @@ import { createUserSchema } from "../schema/user.schema"
 import validate from "../middleware/validateResource"
 
 const router = Router()
+const BASE_ROUTE = "/api/users"
 
-router.post("/api/users", validate(createUserSchema), createUserHandler)
+router.post(BASE_ROUTE, validate(createUserSchema), createUserHandler)
 
 
 export default router

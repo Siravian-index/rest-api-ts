@@ -6,6 +6,9 @@ export default function deserializeUser(req: Request, res: Response, next: NextF
     const accessToken = req.headers.authorization ?? ""
     const jwtToken = accessToken.replace(/^Bearer\s/, "")
 
+    const refreshToken = req.headers["x-refresh"] ?? ""
+    console.log(refreshToken)
+    
     if (!jwtToken) {
         return next()
     }
@@ -14,6 +17,11 @@ export default function deserializeUser(req: Request, res: Response, next: NextF
     if (decoded) {
         res.locals.user = decoded
         return next()
+    }
+
+
+    if (expired && refreshToken) {
+
     }
 
     return next()
