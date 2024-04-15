@@ -1,6 +1,6 @@
 import config from 'config'
 import jwt from "jsonwebtoken"
-import { findOneBy } from '../service/session.service'
+import { findOneSessionBy } from '../service/session.service'
 import { findUser } from '../service/user.service'
 import logger from './logger'
 
@@ -44,7 +44,7 @@ export async function reIssueAccessToken(refreshToken: string) {
 
     //@ts-ignore
     const sessionId = decoded.session
-    const session = await findOneBy({ _id: sessionId })
+    const session = await findOneSessionBy({ _id: sessionId })
     if (!session || !session.valid) {
         return false
     }

@@ -1,6 +1,5 @@
 import { FilterQuery, UpdateQuery } from "mongoose";
 import Session, { SessionDocument } from "../models/session.model";
-import { verifyJwt } from "../utils/jwt";
 
 
 export async function createSession(userId: string, userAgent: string) {
@@ -17,7 +16,7 @@ export async function updateSession(query: FilterQuery<SessionDocument>, update:
     return Session.updateOne(query, update).lean()
 }
 
-export async function findOneBy(query: FilterQuery<SessionDocument>) {
+export async function findOneSessionBy(query: FilterQuery<SessionDocument>) {
     return await Session.findOne(query)
 }
 
