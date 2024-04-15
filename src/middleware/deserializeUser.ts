@@ -20,18 +20,15 @@ export default async function deserializeUser(req: Request, res: Response, next:
 
 
     if (expired && refreshToken) {
-        console.log("On reIssueAccessToken")
         // reissue accessToken
         const newAccessToken = await reIssueAccessToken(refreshToken.toString())
-        console.log({newAccessToken})
         if (newAccessToken) {
             res.setHeader("x-access-token", newAccessToken)
         }
 
         const result = verifyJwt(newAccessToken.toString())
-        console.log({result})
         if (result.decoded) {
-            res.locals.user = decoded
+            res.locals.user = result.decoded
             return next()
         }
     }
