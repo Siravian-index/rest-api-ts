@@ -24,6 +24,7 @@ export function verifyJwt(token: string) {
             expired: false,
         }
     } catch (e: any) {
+        console.log(e)
         return {
             decoded: null,
             valid: false,
@@ -32,31 +33,42 @@ export function verifyJwt(token: string) {
     }
 }
 
+// TODO: Make func throw instead of returning false
 export async function reIssueAccessToken(refreshToken: string) {
     const { decoded, valid, expired } = verifyJwt(refreshToken)
 
     if (!decoded || !valid) {
+        console.log("Failed to decode refreshToken")
         return false
     }
 
     //@ts-ignore
     const sessionId = decoded.session
-
-    const session = await findOneBy({ id: sessionId })
+    console.log({ decoded })
+    const session = await findOneBy({ _id: sessionId })
     if (!session || !session.valid) {
+        console.log("Failed to find session by id")
         return false
     }
 
-    const user = await findUser({ id: session.user })
+    const user = await findUser({ _id: session.user })
 
     if (!user) {
+        console.log("Failed to find user by id")
         return false
     }
+
+    const userJSON = user.toJSON()
+    const sessionJSON = session.toJSON()
+    console.log({userJSON})
+    console.log({sessionJSON})
+
+
 
     const accessToken = signJwt(
         {
-            ...user,
-            session: session.id
+            ...userJSON,
+            session: sessionJSON.id
         },
         {
             expiresIn: config.get<string>("accessTokenTtl")

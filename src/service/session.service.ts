@@ -14,7 +14,7 @@ export async function findSessions(query: FilterQuery<SessionDocument>) {
 }
 
 export async function updateSession(query: FilterQuery<SessionDocument>, update: UpdateQuery<SessionDocument>) {
-    return Session.updateOne(query, update)
+    return Session.updateOne(query, update).lean()
 }
 
 export async function findOneBy(query: FilterQuery<SessionDocument>) {
