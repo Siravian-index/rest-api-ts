@@ -16,6 +16,8 @@ export function signJwt<T extends Object>(payload: T, options: jwt.SignOptions =
 
 
 export function verifyJwt(token: string) {
+    console.log("verifyJwt")
+    console.log({ token })
     try {
         const decoded = jwt.verify(token, publicKey)
         return {
@@ -60,8 +62,8 @@ export async function reIssueAccessToken(refreshToken: string) {
 
     const userJSON = user.toJSON()
     const sessionJSON = session.toJSON()
-    console.log({userJSON})
-    console.log({sessionJSON})
+    console.log({ userJSON })
+    console.log({ sessionJSON })
 
 
 
