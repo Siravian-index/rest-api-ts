@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyJwt } from "../utils/jwt";
+import { reIssueAccessToken, verifyJwt } from "../utils/jwt";
 
 
-export default function deserializeUser(req: Request, res: Response, next: NextFunction) {
+export default async function deserializeUser(req: Request, res: Response, next: NextFunction) {
     const accessToken = req.headers.authorization ?? ""
     const jwtToken = accessToken.replace(/^Bearer\s/, "")
 
     const refreshToken = req.headers["x-refresh"] ?? ""
-    console.log(refreshToken)
-    
+
     if (!jwtToken) {
         return next()
     }
@@ -21,7 +20,16 @@ export default function deserializeUser(req: Request, res: Response, next: NextF
 
 
     if (expired && refreshToken) {
-
+        // reissue accessToken
+        const accessToken = await reIssueAccessToken(refreshToken.toString())
+        if (accessToken) {
+            res.setHeader("x-access-token", accessToken)
+        }
+        const result = verifyJwt(accessToken.toString())
+        if (result.decoded) {
+            res.locals.user = decoded
+            return next()
+        }
     }
 
     return next()

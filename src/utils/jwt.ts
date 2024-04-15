@@ -1,5 +1,7 @@
 import config from 'config'
 import jwt from "jsonwebtoken"
+import { findOneBy } from '../service/session.service'
+import { findUser } from '../service/user.service'
 
 const publicKey = config.get<string>("publicKey")
 const privateKey = config.get<string>("privateKey")
@@ -30,3 +32,36 @@ export function verifyJwt(token: string) {
     }
 }
 
+export async function reIssueAccessToken(refreshToken: string) {
+    const { decoded, valid, expired } = verifyJwt(refreshToken)
+
+    if (!decoded || !valid) {
+        return false
+    }
+
+    //@ts-ignore
+    const sessionId = decoded.session
+
+    const session = await findOneBy({ id: sessionId })
+    if (!session || !session.valid) {
+        return false
+    }
+
+    const user = await findUser({ id: session.user })
+
+    if (!user) {
+        return false
+    }
+
+    const accessToken = signJwt(
+        {
+            ...user,
+            session: session.id
+        },
+        {
+            expiresIn: config.get<string>("accessTokenTtl")
+        }
+    )
+
+    return accessToken
+}
