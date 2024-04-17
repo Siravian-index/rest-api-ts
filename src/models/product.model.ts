@@ -7,14 +7,16 @@ const nanoid = customAlphabet("qwertyuiopasfghjklzxcvbnm1234567890", 10)
 
 
 export interface ProductInput {
+  user: UserDocument["_id"]
   title: string
   description: string
   price: number
   image: string
 }
 export interface ProductDocument extends ProductInput, mongoose.Document {
-  user: UserDocument["_id"]
   productId: string
+  updatedAt: Date
+  createdAt: Date
 }
 
 const schema = new mongoose.Schema<ProductDocument>({
