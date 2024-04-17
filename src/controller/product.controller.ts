@@ -81,7 +81,7 @@ export async function deleteProductHandler(req: Request<UpdateProduct["params"]>
       return res.sendStatus(404)
     }
 
-    if (!String(product.user) === userId) {
+    if (String(product.user) !== userId) {
       return res.sendStatus(403)
     }
 
