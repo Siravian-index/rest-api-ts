@@ -15,9 +15,9 @@ export const createUserSchema = z.object({
             required_error: "PasswordConfirmation is required"
         }),
     }).refine((data) => data.password === data.passwordConfirmation, {
-        message: "Password do not match",
+        message: "Passwords do not match",
         path: ["passwordConfirmation"],
     }),
 })
 
-export type createUserInput = z.TypeOf<typeof createUserSchema>
+export type CreateUserInput = z.TypeOf<typeof createUserSchema>
