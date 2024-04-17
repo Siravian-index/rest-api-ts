@@ -1,10 +1,6 @@
 import mongoose from "mongoose"
 import { UserDocument } from "./user.model"
 
-import { customAlphabet } from "nanoid"
-
-const nanoid = customAlphabet("qwertyuiopasfghjklzxcvbnm1234567890", 10)
-
 
 export interface ProductInput {
   user: UserDocument["_id"]
@@ -14,7 +10,6 @@ export interface ProductInput {
   image: string
 }
 export interface ProductDocument extends ProductInput, mongoose.Document {
-  productId: string
   updatedAt: Date
   createdAt: Date
 }
@@ -39,12 +34,6 @@ const schema = new mongoose.Schema<ProductDocument>({
   image: {
     type: String,
     require: true,
-  },
-  productId: {
-    type: String,
-    require: true,
-    unique: true,
-    default: () => `product_${nanoid()}`
   },
 },
   {

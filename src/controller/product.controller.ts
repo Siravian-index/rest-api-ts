@@ -29,16 +29,16 @@ export async function updateProductHandler(req: Request<UpdateProduct["params"],
     const productId = req.params.productId
     const update = req.body
 
-    const product = await findProduct({ productId })
+    const product = await findProduct({ _id: productId })
     if (!product) {
       return res.sendStatus(404)
     }
 
-    if (!product.user === userId) {
+    if (!String(product.user) !== userId) {
       return res.sendStatus(403)
     }
 
-    const updated = await findAndUpdateProduct({ productId }, update, { new: true })
+    const updated = await findAndUpdateProduct({ _id: productId }, update, { new: true })
 
     return res.send(updated)
 
@@ -55,7 +55,7 @@ export async function getProductHandler(req: Request<UpdateProduct["params"]>, r
   try {
     // const userId = res.locals.user.id
     const productId = req.params.productId
-    const product = await findProduct({ productId })
+    const product = await findProduct({ _id: productId })
     if (!product) {
       return res.sendStatus(404)
     }
@@ -76,17 +76,17 @@ export async function deleteProductHandler(req: Request<UpdateProduct["params"]>
     const userId = res.locals.user.id
     const productId = req.params.productId
 
-    const product = await findProduct({ productId })
+    const product = await findProduct({ _id: productId })
     if (!product) {
       return res.sendStatus(404)
     }
 
-    if (!product.user === userId) {
+    if (!String(product.user) === userId) {
       return res.sendStatus(403)
     }
 
-    await deleteProduct({ productId })
-    
+    await deleteProduct({ _id: productId })
+
     return res.sendStatus(200)
   } catch (error) {
     logger.error(error)

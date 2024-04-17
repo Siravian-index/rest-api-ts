@@ -8,18 +8,16 @@ import { createProductSchema, deleteProductSchema, getProductSchema, updateProdu
 import { createProductHandler, deleteProductHandler, getProductHandler, updateProductHandler } from "../controller/product.controller"
 
 const BASE_ROUTE = "/api/products"
+const WITH_PRODUCT_ID = `${BASE_ROUTE}/:productId`
 const router = Router()
 
 router.post(BASE_ROUTE, [requiredUser, validate(createProductSchema)], createProductHandler)
 
-router.put(BASE_ROUTE, [requiredUser, validate(updateProductSchema)], updateProductHandler)
+router.put(WITH_PRODUCT_ID, [requiredUser, validate(updateProductSchema)], updateProductHandler)
 
-router.delete(BASE_ROUTE, [requiredUser, validate(deleteProductSchema)], deleteProductHandler)
+router.delete(WITH_PRODUCT_ID, [requiredUser, validate(deleteProductSchema)], deleteProductHandler)
 
-router.get(BASE_ROUTE, [requiredUser, validate(getProductSchema)], getProductHandler)
-
-
-
+router.get(WITH_PRODUCT_ID, [requiredUser, validate(getProductSchema)], getProductHandler)
 
 
 export default router

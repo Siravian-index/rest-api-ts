@@ -63,7 +63,10 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
 export async function deleteUserSessionHandler(req: Request, res: Response) {
     const sessionId = res.locals.user.session
     try {
-        await updateSession({ id: sessionId }, { valid: false })
+        // TODO: improve this logic
+        // make it so it cannot repeat the same session
+        // return something else
+        await updateSession({ _id: sessionId }, { valid: false })
         return res.send({
             accessToken: null,
             refreshToken: null,
