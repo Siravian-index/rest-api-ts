@@ -16,10 +16,10 @@ export async function createProductHandler(req: Request<{}, {}, CreateProduct["b
     const product = await createProduct(payload)
     return res.send(product)
   } catch (error) {
-    logger.error(error)
     if (error instanceof CustomError) {
       return res.status(error.getStatus()).send(error.serialize())
     }
+    logger.error(error)
     const e = new InternalServerError()
     return res.status(e.getStatus()).send(e.serialize())
   }
@@ -44,10 +44,10 @@ export async function updateProductHandler(req: Request<UpdateProduct["params"],
 
     return res.send(updated)
   } catch (error) {
-    logger.error(error)
     if (error instanceof CustomError) {
       return res.status(error.getStatus()).send(error.serialize())
     }
+    logger.error(error)
     const e = new InternalServerError()
     return res.status(e.getStatus()).send(e.serialize())
   }
@@ -64,10 +64,10 @@ export async function getProductHandler(req: Request<UpdateProduct["params"]>, r
     return res.send(product)
 
   } catch (error) {
-    logger.error(error)
     if (error instanceof CustomError) {
       return res.status(error.getStatus()).send(error.serialize())
     }
+    logger.error(error)
     const e = new InternalServerError()
     return res.status(e.getStatus()).send(e.serialize())
   }
@@ -91,10 +91,10 @@ export async function deleteProductHandler(req: Request<UpdateProduct["params"]>
 
     return res.sendStatus(200)
   } catch (error) {
-    logger.error(error)
     if (error instanceof CustomError) {
       return res.status(error.getStatus()).send(error.serialize())
     }
+    logger.error(error)
     const e = new InternalServerError()
     return res.status(e.getStatus()).send(e.serialize())
   }

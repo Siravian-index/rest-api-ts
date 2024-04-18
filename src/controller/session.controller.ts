@@ -40,10 +40,10 @@ export async function createUserSessionHandler(req: Request, res: Response) {
         const data = { accessToken, refreshToken }
         return res.send({ data })
     } catch (error) {
-        logger.error(error)
         if (error instanceof CustomError) {
-          return res.status(error.getStatus()).send(error.serialize())
+            return res.status(error.getStatus()).send(error.serialize())
         }
+        logger.error(error)
         const e = new InternalServerError()
         return res.status(e.getStatus()).send(e.serialize())
     }
@@ -56,10 +56,10 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
 
         return res.send({ data: sessions })
     } catch (error) {
-        logger.error(error)
         if (error instanceof CustomError) {
-          return res.status(error.getStatus()).send(error.serialize())
+            return res.status(error.getStatus()).send(error.serialize())
         }
+        logger.error(error)
         const e = new InternalServerError()
         return res.status(e.getStatus()).send(e.serialize())
     }
@@ -79,10 +79,10 @@ export async function deleteUserSessionHandler(req: Request, res: Response<{}, J
             refreshToken: null,
         })
     } catch (error) {
-        logger.error(error)
         if (error instanceof CustomError) {
-          return res.status(error.getStatus()).send(error.serialize())
+            return res.status(error.getStatus()).send(error.serialize())
         }
+        logger.error(error)
         const e = new InternalServerError()
         return res.status(e.getStatus()).send(e.serialize())
     }

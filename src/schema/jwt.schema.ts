@@ -22,10 +22,10 @@ export const jwtSchema = z.object({
         session: z.string({
             required_error: "session is required"
         }),
-        iat: z.string({
+        iat: z.number({
             required_error: "iat is required"
         }),
-        exp: z.string({
+        exp: z.number({
             required_error: "exp is required"
         }),
     }),

@@ -9,10 +9,10 @@ export async function createUserHandler(req: Request<{}, {}, CreateUserInput["bo
         const user = await createUser(req.body)
         return res.json({ data: user })
     } catch (error) {
-        logger.error(error)
         if (error instanceof CustomError) {
-          return res.status(error.getStatus()).send(error.serialize())
+            return res.status(error.getStatus()).send(error.serialize())
         }
+        logger.error(error)
         const e = new InternalServerError()
         return res.status(e.getStatus()).send(e.serialize())
     }
