@@ -1,6 +1,7 @@
 
 import { FilterQuery } from "mongoose"
 import User, { UserDocument, UserInput } from "../models/user.model"
+import { InvalidLogicError, ResourceNotFound } from "../errors"
 
 export async function createUser(data: UserInput) {
     const user = await User.create(data)
@@ -11,12 +12,12 @@ export async function createUser(data: UserInput) {
 export async function validatePassword({ email, password }: { email: string, password: string }) {
     const user = await User.findOne({ email })
     if (!user) {
-        return false
+        throw new ResourceNotFound(`User ${email} was not found`)
     }
 
     const isValid = await user.comparePasswords(password)
     if (!isValid) {
-        return false
+        throw new InvalidLogicError("User passwords do not match")
     }
 
     return user.toJSON()

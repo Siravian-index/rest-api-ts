@@ -4,8 +4,7 @@ import { Request, Response } from "express";
 import logger from "../utils/logger";
 import { CreateProduct, UpdateProduct } from "../schema/product.schema";
 import { createProduct, deleteProduct, findAndUpdateProduct, findProduct } from "../service/product.service";
-import { ResourceNotFound, CustomError, ForbiddenError } from "../errors";
-import { InternalServerError } from "../errors/InternalServeError";
+import { ResourceNotFound, CustomError, ForbiddenError, InternalServerError } from "../errors";
 
 export async function createProductHandler(req: Request<{}, {}, CreateProduct["body"]>, res: Response) {
   try {

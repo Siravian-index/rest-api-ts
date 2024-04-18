@@ -5,15 +5,13 @@ import { validatePassword } from "../service/user.service";
 import { createSession, findSessions, updateSession } from "../service/session.service";
 import { signJwt } from "../utils/jwt";
 import logger from "../utils/logger";
+import { CustomError, InternalServerError } from "../errors";
 
 
 export async function createUserSessionHandler(req: Request, res: Response) {
     try {
         // validate password
         const user = await validatePassword(req.body)
-        if (!user) {
-            return res.status(401).send("Invalid email or password")
-        }
         // create session
         const userAgent = req.get("user-agent") ?? ""
         const session = await createSession(user.id, userAgent)
@@ -42,7 +40,11 @@ export async function createUserSessionHandler(req: Request, res: Response) {
         return res.send({ data })
     } catch (error) {
         logger.error(error)
-        return res.status(500).send("Something went wrong")
+        if (error instanceof CustomError) {
+          return res.status(error.getStatus()).send(error.serialize())
+        }
+        const e = new InternalServerError()
+        return res.status(e.getStatus()).send(e.serialize())
     }
 }
 
@@ -54,7 +56,11 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
         return res.send({ data: sessions })
     } catch (error) {
         logger.error(error)
-        return res.status(500).send("Something went wrong")
+        if (error instanceof CustomError) {
+          return res.status(error.getStatus()).send(error.serialize())
+        }
+        const e = new InternalServerError()
+        return res.status(e.getStatus()).send(e.serialize())
     }
 
 }
@@ -73,6 +79,10 @@ export async function deleteUserSessionHandler(req: Request, res: Response) {
         })
     } catch (error) {
         logger.error(error)
-        return res.status(500).send("Something went wrong")
+        if (error instanceof CustomError) {
+          return res.status(error.getStatus()).send(error.serialize())
+        }
+        const e = new InternalServerError()
+        return res.status(e.getStatus()).send(e.serialize())
     }
 }
