@@ -6,6 +6,7 @@ import { createSession, findSessions, updateSession } from "../service/session.s
 import { signJwt } from "../utils/jwt";
 import logger from "../utils/logger";
 import { CustomError, InternalServerError } from "../errors";
+import { JwtPayload } from "../schema/jwt.schema";
 
 
 export async function createUserSessionHandler(req: Request, res: Response) {
@@ -66,7 +67,7 @@ export async function getUserSessionsHandler(req: Request, res: Response) {
 }
 
 
-export async function deleteUserSessionHandler(req: Request, res: Response) {
+export async function deleteUserSessionHandler(req: Request, res: Response<{}, JwtPayload>) {
     const sessionId = res.locals.user.session
     try {
         // TODO: improve this logic

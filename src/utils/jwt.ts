@@ -20,11 +20,9 @@ export function signJwt<T extends Object>(payload: T, options: jwt.SignOptions =
 export function verifyJwt(token: string) {
     try {
         const decoded = jwt.verify(token, publicKey)
-        debugger
-        console.log({decoded})
-        const parsed = jwtSchema.parse(decoded)
+        const parsed = jwtSchema.parse({ user: decoded })
         return {
-            decoded: parsed,
+            decoded: parsed.user,
             valid: true,
             expired: false,
         }
