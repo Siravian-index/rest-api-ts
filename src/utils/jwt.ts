@@ -3,6 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken"
 import { findOneSessionBy } from '../service/session.service'
 import { findUser } from '../service/user.service'
 import logger from './logger'
+import { jwtSchema } from '../schema/jwt.schema'
 
 const publicKey = config.get<string>("publicKey")
 const privateKey = config.get<string>("privateKey")
@@ -21,8 +22,9 @@ export function verifyJwt(token: string) {
         const decoded = jwt.verify(token, publicKey)
         debugger
         console.log(decoded)
+        const parsed = jwtSchema.parse(decoded)
         return {
-            decoded,
+            decoded: parsed,
             valid: true,
             expired: false,
         }
@@ -44,7 +46,6 @@ export async function reIssueAccessToken(refreshToken: string) {
         return false
     }
 
-    //@ts-ignore
     const sessionId = decoded.session
     const session = await findOneSessionBy({ _id: sessionId })
     if (!session || !session.valid) {
