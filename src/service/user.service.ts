@@ -4,6 +4,10 @@ import User, { UserDocument, UserInput } from "../models/user.model"
 import { InvalidLogicError, ResourceNotFound } from "../errors"
 
 export async function createUser(data: UserInput) {
+    const found = await User.findOne({ email: data.email })
+    if (found) {
+        throw new InvalidLogicError(`User ${data.email} already exist`)
+    }
     const user = await User.create(data)
     return user.toJSON()
 }
