@@ -1,5 +1,5 @@
 import config from 'config'
-import jwt from "jsonwebtoken"
+import jwt, { JwtPayload } from "jsonwebtoken"
 import { findOneSessionBy } from '../service/session.service'
 import { findUser } from '../service/user.service'
 import logger from './logger'
@@ -19,6 +19,8 @@ export function signJwt<T extends Object>(payload: T, options: jwt.SignOptions =
 export function verifyJwt(token: string) {
     try {
         const decoded = jwt.verify(token, publicKey)
+        debugger
+        console.log(decoded)
         return {
             decoded,
             valid: true,
