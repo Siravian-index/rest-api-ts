@@ -1,25 +1,11 @@
-import { CustomError, Params } from "./CustomError"
+import { CustomError } from "./CustomError"
 
 
-// default values
-// status
-// code
 export class ResourceNotFound extends CustomError {
-    constructor(message = "", detail = "") {
+    constructor(message = "The resource was not found, check search param") {
         super()
         this.status = 404
         this.code = "RESOURCE_NOT_FOUND"
         this.message = message
-        this.detail = detail
     }
-
-    serialize() {
-        return {
-            message: this.message,
-            code: this.code,
-            detail: this.detail,
-            status: this.status,
-        }
-    }
-
 }

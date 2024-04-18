@@ -4,7 +4,8 @@ import { Request, Response } from "express";
 import logger from "../utils/logger";
 import { CreateProduct, UpdateProduct } from "../schema/product.schema";
 import { createProduct, deleteProduct, findAndUpdateProduct, findProduct } from "../service/product.service";
-import { ResourceNotFound, CustomError } from "../errors";
+import { ResourceNotFound, CustomError, ForbiddenError } from "../errors";
+import { InternalServerError } from "../errors/InternalServeError";
 
 export async function createProductHandler(req: Request<{}, {}, CreateProduct["body"]>, res: Response) {
   try {
@@ -17,10 +18,11 @@ export async function createProductHandler(req: Request<{}, {}, CreateProduct["b
     return res.send(product)
   } catch (error) {
     logger.error(error)
-    if (error instanceof Error) {
-      return res.status(400).send(error.message)
+    if (error instanceof CustomError) {
+      return res.status(error.getStatus()).send(error.serialize())
     }
-    return res.status(500).send("Internal server error")
+    const e = new InternalServerError()
+    return res.status(e.getStatus()).send(e.serialize())
   }
 }
 
@@ -32,47 +34,43 @@ export async function updateProductHandler(req: Request<UpdateProduct["params"],
 
     const product = await findProduct({ _id: productId })
     if (!product) {
-      throw new ResourceNotFound({ message: "" })
-      // return res.sendStatus(404)
+      throw new ResourceNotFound(`Could not find product by id: ${productId}`)
     }
 
     if (String(product.user) !== userId) {
-      return res.sendStatus(403)
+      throw new ForbiddenError(`User: ${userId} is not the owner/creator of this product`)
     }
 
     const updated = await findAndUpdateProduct({ _id: productId }, update, { new: true })
 
     return res.send(updated)
-
   } catch (error) {
     logger.error(error)
     if (error instanceof CustomError) {
-      return res.status(404).send(error.serialize())
+      return res.status(error.getStatus()).send(error.serialize())
     }
-    if (error instanceof Error) {
-      return res.status(400).send(error.message)
-    }
-    return res.status(500).send("Internal server error")
+    const e = new InternalServerError()
+    return res.status(e.getStatus()).send(e.serialize())
   }
 }
 
 export async function getProductHandler(req: Request<UpdateProduct["params"]>, res: Response) {
   try {
-    // const userId = res.locals.user.id
     const productId = req.params.productId
     const product = await findProduct({ _id: productId })
     if (!product) {
-      return res.sendStatus(404)
+      throw new ResourceNotFound(`Could not find product by id: ${productId}`)
     }
 
     return res.send(product)
 
   } catch (error) {
     logger.error(error)
-    if (error instanceof Error) {
-      return res.status(400).send(error.message)
+    if (error instanceof CustomError) {
+      return res.status(error.getStatus()).send(error.serialize())
     }
-    return res.status(500).send("Internal server error")
+    const e = new InternalServerError()
+    return res.status(e.getStatus()).send(e.serialize())
   }
 }
 
@@ -83,11 +81,11 @@ export async function deleteProductHandler(req: Request<UpdateProduct["params"]>
 
     const product = await findProduct({ _id: productId })
     if (!product) {
-      return res.sendStatus(404)
+      throw new ResourceNotFound(`Could not find product by id: ${productId}`)
     }
 
     if (String(product.user) !== userId) {
-      return res.sendStatus(403)
+      throw new ForbiddenError(`User: ${userId} is not the owner/creator of this product`)
     }
 
     await deleteProduct({ _id: productId })
@@ -95,9 +93,10 @@ export async function deleteProductHandler(req: Request<UpdateProduct["params"]>
     return res.sendStatus(200)
   } catch (error) {
     logger.error(error)
-    if (error instanceof Error) {
-      return res.status(400).send(error.message)
+    if (error instanceof CustomError) {
+      return res.status(error.getStatus()).send(error.serialize())
     }
-    return res.status(500).send("Internal server error")
+    const e = new InternalServerError()
+    return res.status(e.getStatus()).send(e.serialize())
   }
 }
