@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import logger from "../utils/logger";
 import { CreateProduct, UpdateProduct } from "../schema/product.schema";
 import { createProduct, deleteProduct, findAndUpdateProduct, findProduct } from "../service/product.service";
+import { ResourceNotFound, CustomError } from "../errors";
 
 export async function createProductHandler(req: Request<{}, {}, CreateProduct["body"]>, res: Response) {
   try {
@@ -31,7 +32,8 @@ export async function updateProductHandler(req: Request<UpdateProduct["params"],
 
     const product = await findProduct({ _id: productId })
     if (!product) {
-      return res.sendStatus(404)
+      throw new ResourceNotFound({ message: "" })
+      // return res.sendStatus(404)
     }
 
     if (String(product.user) !== userId) {
@@ -44,6 +46,9 @@ export async function updateProductHandler(req: Request<UpdateProduct["params"],
 
   } catch (error) {
     logger.error(error)
+    if (error instanceof CustomError) {
+      return res.status(404).send(error.serialize())
+    }
     if (error instanceof Error) {
       return res.status(400).send(error.message)
     }

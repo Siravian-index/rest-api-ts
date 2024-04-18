@@ -1,24 +1,32 @@
 
-interface Params {
+export interface Params {
     message: string
     code: string
     detail: string
     status: number
 }
 
-abstract class CustomError extends Error {
+export abstract class CustomError extends Error {
     protected status: number
     protected code: string
     protected detail: string
 
-    constructor({ message, code, detail, status }: Params) {
-        super(message)
-        this.code = code
-        this.detail = detail
-        this.status = status
+
+    constructor() {
+        super("CustomError")
+        this.status = 500
+        this.code = "CustomError"
+        this.detail = "CustomError"
         Object.setPrototypeOf(this, CustomError.prototype)
     }
 
-    abstract serialize(): string
-    abstract stringify(): string
+    serialize(): Record<string, string | number> {
+        return {
+            message: this.message,
+            code: this.code,
+            detail: this.detail,
+            status: this.status,
+        }
+    }
+    
 }
