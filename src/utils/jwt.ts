@@ -21,7 +21,7 @@ export function verifyJwt(token: string) {
     try {
         const decoded = jwt.verify(token, publicKey)
         debugger
-        console.log(decoded)
+        console.log({decoded})
         const parsed = jwtSchema.parse(decoded)
         return {
             decoded: parsed,

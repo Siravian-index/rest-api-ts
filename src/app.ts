@@ -12,9 +12,10 @@ const app = express()
 app.use(express.json())
 app.use(deserializeUser)
 
+routes(app)
+
 app.listen(PORT, async () => {
     logger.info(`App is running at ${PORT}`)
     await connect()
-    routes(app)
 })
 
