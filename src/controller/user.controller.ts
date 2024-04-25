@@ -17,3 +17,8 @@ export async function createUserHandler(req: Request<{}, {}, CreateUserInput["bo
         return res.status(e.getStatus()).send(e.serialize())
     }
 }
+
+
+export async function getCurrentUserHandler(req: Request, res: Response) {
+    return res.send(res.locals.user)
+}
