@@ -37,8 +37,8 @@ export async function createUserSessionHandler(req: Request, res: Response) {
             }
         )
         // send access & refresh token
-        const data = { accessToken, refreshToken }
-        return res.send({ data })
+        // const data = { accessToken, refreshToken, user }
+        return res.send({ accessToken, refreshToken, user })
     } catch (error) {
         if (error instanceof CustomError) {
             return res.status(error.getStatus()).send(error.serialize())
@@ -85,5 +85,14 @@ export async function deleteUserSessionHandler(req: Request, res: Response<{}, J
         logger.error(error)
         const e = new InternalServerError()
         return res.status(e.getStatus()).send(e.serialize())
+    }
+}
+
+
+export async function googleOauthHandler(req: Request, res: Response) {
+    try {
+
+    } catch (error) {
+
     }
 }

@@ -1,6 +1,6 @@
 export default {
     port: 1337,
-    origin: "http://localhost:3000",
+    origin: "http://localhost:5173",
     dbUri: "mongodb+srv://davidAdmin:Hq5Cd2Vxh1pwscRN@nodejs.iymwdi4.mongodb.net/?retryWrites=true&w=majority",
     saltWorkFactor: 10,
     accessTokenTtl: "15m",
