@@ -1,4 +1,7 @@
 export default {
+    googleClientId: "50282985284-vmr9ch1kh8nreiln8v04n7vd9niojcoi.apps.googleusercontent.com",
+    googleClientSecret: "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",
+    googleOauthRedirect: "http://localhost:1337/api/sessions/oauth/google",
     port: 1337,
     origin: "http://localhost:5173",
     dbUri: "mongodb+srv://davidAdmin:Hq5Cd2Vxh1pwscRN@nodejs.iymwdi4.mongodb.net/?retryWrites=true&w=majority",

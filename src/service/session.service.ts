@@ -20,37 +20,3 @@ export async function findOneSessionBy(query: FilterQuery<SessionDocument>) {
     return await Session.findOne(query)
 }
 
-// TODO: Ask how to organize this situation i.e. service calling serve or utility calling services
-// export async function reIssueAccessToken(refreshToken: string) {
-//     const { decoded, valid, expired } = verifyJwt(refreshToken)
-
-//     if (!decoded || !valid) {
-//         return false
-//     }
-
-//     //@ts-ignore
-//     const sessionId = decoded.session
-
-//     const session = await findOneBy({ id: sessionId })
-//     if (!session || !session.valid) {
-//         return false
-//     }
-
-//     const user = await findUser({ id: session.user })
-
-//     if (!user) {
-//         return false
-//     }
-
-//     const accessToken = signJwt(
-//         {
-//             ...user,
-//             session: session.id
-//         },
-//         {
-//             expiresIn: config.get<string>("accessTokenTtl")
-//         }
-//     )
-
-//     return accessToken
-// }

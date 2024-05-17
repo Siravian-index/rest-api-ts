@@ -91,8 +91,13 @@ export async function deleteUserSessionHandler(req: Request, res: Response<{}, J
 
 export async function googleOauthHandler(req: Request, res: Response) {
     try {
-
+        res.status(200).json({ok: true})
     } catch (error) {
-
+        if (error instanceof CustomError) {
+            return res.status(error.getStatus()).send(error.serialize())
+        }
+        logger.error(error)
+        const e = new InternalServerError()
+        return res.status(e.getStatus()).send(e.serialize())
     }
 }
