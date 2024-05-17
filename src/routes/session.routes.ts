@@ -1,3 +1,4 @@
+import { googleOAuthSchema } from './../schema/googleToken.schema';
 
 
 import { Router } from "express"
@@ -18,6 +19,6 @@ router.get(BASE_ROUTE, requiredUser, getUserSessionsHandler)
 router.delete(BASE_ROUTE, requiredUser, deleteUserSessionHandler)
 
 // google oauth handler
-router.get(`${BASE_ROUTE}${OAUTH_GOOGLE}`, googleOauthHandler)
+router.get(`${BASE_ROUTE}${OAUTH_GOOGLE}`, validate(googleOAuthSchema), googleOauthHandler)
 
 export default router

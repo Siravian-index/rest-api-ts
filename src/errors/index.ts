@@ -1,3 +1,4 @@
+import { InvalidSchemaError } from './InvalidSchema';
 import { CustomError } from "./CustomError"
 import { ForbiddenError } from "./ForbiddenError"
 import { GenericError } from "./GenericError"
@@ -13,4 +14,5 @@ export {
     ForbiddenError,
     InvalidLogicError,
     InternalServerError,
+    InvalidSchemaError,
 }

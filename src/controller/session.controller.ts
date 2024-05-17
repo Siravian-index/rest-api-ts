@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 
 import config from "config"
-import { validatePassword } from "../service/user.service";
+import { getGoogleOAuthTokens, validatePassword } from "../service/user.service";
 import { createSession, findSessions, updateSession } from "../service/session.service";
 import { signJwt } from "../utils/jwt";
 import logger from "../utils/logger";
 import { CustomError, InternalServerError } from "../errors";
 import { JwtPayload } from "../schema/jwt.schema";
+import { GoogleOAuth } from "../schema/googleToken.schema";
 
 
 export async function createUserSessionHandler(req: Request, res: Response) {
@@ -89,9 +90,25 @@ export async function deleteUserSessionHandler(req: Request, res: Response<{}, J
 }
 
 
-export async function googleOauthHandler(req: Request, res: Response) {
+export async function googleOauthHandler(req: Request<{}, {}, {}, GoogleOAuth["query"]>, res: Response) {
     try {
-        res.status(200).json({ok: true})
+        // get code from query string
+        const code = req.query.code
+        // get id and access token with the code
+        const values = await getGoogleOAuthTokens(code)
+        console.log({ values })
+        // get user with tokens
+
+        // upsert user
+
+        // create session
+
+        // create access token
+
+        // create refresh token
+
+        // redirect back to client
+        res.status(200).json({ ok: true })
     } catch (error) {
         if (error instanceof CustomError) {
             return res.status(error.getStatus()).send(error.serialize())
