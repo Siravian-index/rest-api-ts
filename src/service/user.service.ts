@@ -1,8 +1,8 @@
 
-import { FilterQuery } from "mongoose"
+import { FilterQuery, QueryOptions, UpdateQuery } from "mongoose"
 import User, { UserDocument, UserInput } from "../models/user.model"
 import { InvalidLogicError, ResourceNotFound, InvalidSchemaError, InternalServerError, GenericError } from "../errors"
-import { GoogleTokenResponse, googleTokenResponseSchema } from "../schema/googleToken.schema"
+import { GoogleTokenResponse, googleTokenResponseSchema, googleUserSchema } from "../schema/googleToken.schema"
 import config from "config"
 import axios, { AxiosError } from "axios"
 import logger from "../utils/logger"
@@ -37,6 +37,14 @@ export async function findUser(query: FilterQuery<UserDocument>) {
     return User.findOne(query)
 }
 
+export async function upsertUser(query: FilterQuery<UserDocument>, update: UpdateQuery<UserDocument>, options: QueryOptions = {}) {
+    const user = await User.findOneAndUpdate(query, update, options)
+    if (!user) {
+        throw new ResourceNotFound(`User was not found`)
+    }
+    return user
+}
+
 export async function getGoogleOAuthTokens(code: string): Promise<GoogleTokenResponse> {
     const url = "https://oauth2.googleapis.com/token"
     const values = {
@@ -49,24 +57,23 @@ export async function getGoogleOAuthTokens(code: string): Promise<GoogleTokenRes
 
     const payload = qs.stringify(values)
 
-    try {
-        const res = await axios.post<GoogleTokenResponse>(url, payload, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            }
-        })
-        const parsed = googleTokenResponseSchema.parse(res.data)
-        return parsed
-    } catch (error) {
-        if (error instanceof ZodError) {
-            throw new InvalidSchemaError()
+    const res = await axios.post<GoogleTokenResponse>(url, payload, {
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
         }
-        if (error instanceof AxiosError) {
-            const err = error.response?.data.error
-            console.log(err)
-            throw new GenericError({ code: err.status, message: err.message, status: err.code })
+    })
+    const parsed = googleTokenResponseSchema.parse(res.data)
+    return parsed
+
+}
+
+export async function getGoogleUser(idToken: string, accessToken: string) {
+    const url = `https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=${accessToken}`
+    const res = await axios.get(url, {
+        headers: {
+            Authorization: `Bearer ${idToken}`
         }
-        logger.error(error)
-        throw new InternalServerError()
-    }
+    })
+    const parsed = googleUserSchema.parse(res.data)
+    return parsed
 }

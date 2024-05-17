@@ -1,13 +1,15 @@
 import { Request, Response } from "express";
 
 import config from "config"
-import { getGoogleOAuthTokens, validatePassword } from "../service/user.service";
+import { getGoogleOAuthTokens, getGoogleUser, upsertUser, validatePassword } from "../service/user.service";
 import { createSession, findSessions, updateSession } from "../service/session.service";
 import { signJwt } from "../utils/jwt";
 import logger from "../utils/logger";
-import { CustomError, InternalServerError } from "../errors";
+import { CustomError, GenericError, InternalServerError, InvalidSchemaError } from "../errors";
 import { JwtPayload } from "../schema/jwt.schema";
 import { GoogleOAuth } from "../schema/googleToken.schema";
+import { ZodError } from "zod";
+import { AxiosError } from "axios";
 
 
 export async function createUserSessionHandler(req: Request, res: Response) {
@@ -96,22 +98,56 @@ export async function googleOauthHandler(req: Request<{}, {}, {}, GoogleOAuth["q
         const code = req.query.code
         // get id and access token with the code
         const values = await getGoogleOAuthTokens(code)
-        console.log({ values })
         // get user with tokens
-
+        const googleUser = await getGoogleUser(values.id_token, values.access_token)
         // upsert user
-
+        const userDoc = await upsertUser({
+            email: googleUser.email
+        },
+            {
+                email: googleUser.email,
+                name: googleUser.name,
+            },
+            { upsert: true, new: true }
+        )
+        const user = userDoc.toJSON()
         // create session
-
+        const userAgent = req.get("user-agent") ?? ""
+        const session = await createSession(user.id, userAgent)
         // create access token
-
+        const accessToken = signJwt(
+            {
+                ...user,
+                session: session.id
+            },
+            {
+                expiresIn: config.get<string>("accessTokenTtl")
+            }
+        )
         // create refresh token
+        const refreshToken = signJwt(
+            {
+                ...user,
+                session: session.id
+            },
+            {
+                expiresIn: config.get<string>("refreshTokenTtl")
+            }
+        )
 
-        // redirect back to client
-        res.status(200).json({ ok: true })
+        // back to client
+        return res.send({ accessToken, refreshToken, user })
     } catch (error) {
         if (error instanceof CustomError) {
             return res.status(error.getStatus()).send(error.serialize())
+        }
+        if (error instanceof ZodError) {
+            throw new InvalidSchemaError()
+        }
+        if (error instanceof AxiosError) {
+            const err = error.response?.data.error
+            console.log(err)
+            throw new GenericError({ code: err.status, message: err.message, status: err.code })
         }
         logger.error(error)
         const e = new InternalServerError()
