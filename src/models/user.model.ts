@@ -6,6 +6,7 @@ export interface UserInput {
     email: string
     name: string
     password: string
+    picture?: string
 }
 export interface UserDocument extends UserInput, mongoose.Document {
     createdAt: Date
@@ -22,6 +23,9 @@ const schema = new mongoose.Schema<UserDocument>({
     name: {
         type: String,
         require: true,
+    },
+    picture: {
+        type: String,
     },
     password: {
         type: String,

@@ -4,10 +4,8 @@ import User, { UserDocument, UserInput } from "../models/user.model"
 import { InvalidLogicError, ResourceNotFound, InvalidSchemaError, InternalServerError, GenericError } from "../errors"
 import { GoogleTokenResponse, googleTokenResponseSchema, googleUserSchema } from "../schema/googleToken.schema"
 import config from "config"
-import axios, { AxiosError } from "axios"
-import logger from "../utils/logger"
+import axios from "axios"
 import qs from "qs"
-import { ZodError } from "zod"
 
 export async function createUser(data: UserInput) {
     const found = await User.findOne({ email: data.email })

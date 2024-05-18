@@ -5,7 +5,7 @@ import { getGoogleOAuthTokens, getGoogleUser, upsertUser, validatePassword } fro
 import { createSession, findSessions, updateSession } from "../service/session.service";
 import { signJwt } from "../utils/jwt";
 import logger from "../utils/logger";
-import { CustomError, GenericError, InternalServerError, InvalidSchemaError } from "../errors";
+import { CustomError, GenericError, InternalServerError, InvalidLogicError, InvalidSchemaError } from "../errors";
 import { JwtPayload } from "../schema/jwt.schema";
 import { GoogleOAuth } from "../schema/googleToken.schema";
 import { ZodError } from "zod";
@@ -100,6 +100,9 @@ export async function googleOauthHandler(req: Request<{}, {}, {}, GoogleOAuth["q
         const values = await getGoogleOAuthTokens(code)
         // get user with tokens
         const googleUser = await getGoogleUser(values.id_token, values.access_token)
+        if (!googleUser.verified_email) {
+            throw new InvalidLogicError("Google account is not verified")
+        }
         // upsert user
         const userDoc = await upsertUser({
             email: googleUser.email
@@ -107,6 +110,7 @@ export async function googleOauthHandler(req: Request<{}, {}, {}, GoogleOAuth["q
             {
                 email: googleUser.email,
                 name: googleUser.name,
+                picture: googleUser.picture,
             },
             { upsert: true, new: true }
         )
@@ -142,12 +146,13 @@ export async function googleOauthHandler(req: Request<{}, {}, {}, GoogleOAuth["q
             return res.status(error.getStatus()).send(error.serialize())
         }
         if (error instanceof ZodError) {
-            throw new InvalidSchemaError()
+            const e = new InvalidSchemaError()
+            return res.status(e.getStatus()).send(e.serialize())
         }
         if (error instanceof AxiosError) {
             const err = error.response?.data.error
-            console.log(err)
-            throw new GenericError({ code: err.status, message: err.message, status: err.code })
+            const e = new GenericError({ code: err.status, message: err.message, status: err.code })
+            return res.status(e.getStatus()).send(e.serialize())
         }
         logger.error(error)
         const e = new InternalServerError()
